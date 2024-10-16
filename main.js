@@ -23,12 +23,12 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
 //shapes here
-const planetGeometry = new THREE.SphereGeometry(15, 32, 16);
+const planetGeometry = new THREE.SphereGeometry(10, 32, 16);
 const planetMaterial = new THREE.MeshBasicMaterial({ color: 0x00FF41, wireframe: true });
 const planetSphere = new THREE.Mesh(planetGeometry, planetMaterial);
 scene.add(planetSphere);
 
-const ringGeometry = new THREE.RingGeometry(20, 30, 32);
+const ringGeometry = new THREE.TorusGeometry(16, 0.4, 16, 100);
 const ringMaterial = new THREE.MeshBasicMaterial({
   color: 0x00FF41,
   side: THREE.DoubleSide,
@@ -64,7 +64,7 @@ Array(200).fill().forEach(addStar);
 function animate() {
   requestAnimationFrame(animate);
 
-  planetGroup.rotation.x += 0.01;
+  // planetGroup.rotation.x += 0.01;
   planetGroup.rotation.y += 0.005;
 
   controls.update();
