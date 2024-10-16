@@ -16,7 +16,15 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 camera.position.setZ(30);
 
-renderer.render(scene, camera);
+//renderer.render(scene, camera);
+
+//lights
+const pointLight = new THREE.PointLight(0xffffff, 1);
+pointLight.position.set(20, 20, 20);
+scene.add(pointLight);
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
 
 //shapes here
 const geometry = new THREE.SphereGeometry(15, 32, 16);
@@ -26,6 +34,23 @@ const sphere = new THREE.Mesh(geometry, material);
 scene.add(sphere);
 
 const controls = new OrbitControls(camera, renderer.domElement);
+
+function addStar() {
+  const geometry = new THREE.SphereGeometry(0.25, 24, 24);
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    emissive: 0xffffff,
+    emissiveIntensity: 0.2
+  });
+  const star = new THREE.Mesh(geometry, material);
+
+  const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
+  star.position.set(x, y, z);
+  scene.add(star)
+
+}
+
+Array(200).fill().forEach(addStar);
 
 function animate() {
   requestAnimationFrame(animate);
