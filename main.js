@@ -39,14 +39,12 @@ const ringMaterial = new THREE.MeshBasicMaterial({
 
 const ring = new THREE.Mesh(ringGeometry, ringMaterial);
 const ringTwo = new THREE.Mesh(ringTwoGeometry, ringMaterial);
-ring.rotation.x = Math.PI / 2;
 
-ringTwo.rotation.x = Math.PI / 2;
-ringTwo.position.y = 5;
-ringTwo.rotation.y = Math.PI / 6;
+ring.rotation.x = Math.PI / 4;
+ringTwo.rotation.x = -Math.PI / 4;
 
-ring.position.y = -5;
-ring.rotation.y = Math.PI / -6;
+ring.position.set = (0, 0, 0);
+ringTwo.position.set = (0, 0, 0);
 
 const planetGroup = new THREE.Group();
 planetGroup.add(planetSphere);
