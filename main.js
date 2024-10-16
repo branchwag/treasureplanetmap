@@ -29,17 +29,21 @@ const planetSphere = new THREE.Mesh(planetGeometry, planetMaterial);
 scene.add(planetSphere);
 
 const ringGeometry = new THREE.TorusGeometry(16, 0.4, 16, 100);
+const ringTwoGeometry = new THREE.TorusGeometry(18, 0.4, 16, 100);
 const ringMaterial = new THREE.MeshBasicMaterial({
   color: 0x00FF41,
   side: THREE.DoubleSide,
   wireframe: true
 });
 const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+const ringTwo = new THREE.Mesh(ringTwoGeometry, ringMaterial);
 ring.rotation.x = Math.PI / 2;
+ringTwo.rotation.x = Math.PI / 2;
 
 const planetGroup = new THREE.Group();
 planetGroup.add(planetSphere);
 planetGroup.add(ring);
+planetGroup.add(ringTwo);
 scene.add(planetGroup);
 
 const controls = new OrbitControls(camera, renderer.domElement);
