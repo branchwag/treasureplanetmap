@@ -17,16 +17,17 @@ camera.position.setZ(30);
 renderer.render(scene, camera);
 
 //shapes here
-const geometry = new THREE.TorusGeometry(10, 3, 16, 100)
+const geometry = new THREE.SphereGeometry(15, 32, 16);
 const material = new THREE.MeshBasicMaterial({ color: 0x00FF41, wireframe: true });
-const torus = new THREE.Mesh(geometry, material);
+const sphere = new THREE.Mesh(geometry, material);
 
-scene.add(torus);
+scene.add(sphere);
 
 function animate() {
   requestAnimationFrame(animate);
 
-  torus.rotation.x += 0.01;
+  sphere.rotation.x += 0.01;
+  sphere.rotation.y += 0.005;
 
   renderer.render(scene, camera);
 }
