@@ -23,10 +23,15 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
 //shapes here
+
+const lilPlanetSphere = new THREE.SphereGeometry(2, 10, 16);
+
 const planetGeometry = new THREE.SphereGeometry(10, 32, 16);
 const planetMaterial = new THREE.MeshBasicMaterial({ color: 0x00FF41, wireframe: true });
 const planetSphere = new THREE.Mesh(planetGeometry, planetMaterial);
 scene.add(planetSphere);
+
+const lilPlanet = new THREE.Mesh(lilPlanetSphere, planetMaterial);
 
 const ringGeometry = new THREE.TorusGeometry(18, 0.4, 16, 100);
 const ringTwoGeometry = new THREE.TorusGeometry(18, 0.4, 16, 100);
@@ -46,11 +51,15 @@ ringTwo.rotation.x = -Math.PI / 4;
 ring.position.set = (0, 0, 0);
 ringTwo.position.set = (0, 0, 0);
 
+lilPlanet.position.set(50, 0, -30); //rightleft, updown, forward/backward
+
 const planetGroup = new THREE.Group();
 planetGroup.add(planetSphere);
 planetGroup.add(ring);
 planetGroup.add(ringTwo);
 scene.add(planetGroup);
+
+scene.add(lilPlanet);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -74,8 +83,12 @@ Array(200).fill().forEach(addStar);
 function animate() {
   requestAnimationFrame(animate);
 
-  // planetGroup.rotation.x += 0.01;
   planetGroup.rotation.y += 0.005;
+
+  const time = Date.now() * 0.001;
+  lilPlanet.position.x = Math.cos(time * 0.05) * 50;
+  lilPlanet.position.z = Math.sin(time * 0.05) * 50;
+
 
   controls.update();
 
