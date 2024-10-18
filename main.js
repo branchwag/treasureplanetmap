@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg'),
 });
@@ -69,22 +69,49 @@ scene.add(lilPlanet);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
-function addStar() {
-  const geometry = new THREE.SphereGeometry(0.25, 24, 24);
-  const material = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    emissive: 0xffffff,
-    emissiveIntensity: 0.2
+function createStarField() {
+  const starLayers = [
+    { count: 500, spread: 200 },
+    { count: 1000, spread: 500 },
+    { count: 2000, spread: 1000 }
+  ];
+
+  starLayers.forEach(layer => {
+    const geometry = new THREE.SphereGeometry(0.25, 24, 24);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      emissive: 0xffffff,
+      emissiveIntensity: 0.2
+    });
+
+    for (let i = 0; i < layer.count; i++) {
+      const star = new THREE.Mesh(geometry, material);
+      const theta = THREE.MathUtils.randFloatSpread(360);
+      const phi = THREE.MathUtils.randFloatSpread(360);
+
+      const radius = layer.spread;
+      star.position.x = radius * Math.sin(theta) * Math.cos(phi);
+      star.position.y = radius * Math.sin(theta) * Math.sin(phi);
+      star.position.z = radius * Math.cos(theta);
+
+      const scale = Math.random() * 0.5 + 0.5;
+      star.scale.set(scale, scale, scale);
+
+      scene.add(star);
+    }
   });
-  const star = new THREE.Mesh(geometry, material);
-
-  const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
-  star.position.set(x, y, z);
-  scene.add(star)
-
 }
 
-Array(200).fill().forEach(addStar);
+createStarField();
+
+controls.maxDistance = 1000;
+controls.minDistance = 10;
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
 function animate() {
   requestAnimationFrame(animate);
