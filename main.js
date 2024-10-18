@@ -24,14 +24,14 @@ scene.add(ambientLight);
 
 //shapes here
 
-const lilPlanetSphere = new THREE.SphereGeometry(2, 10, 16);
+const moonSphere = new THREE.SphereGeometry(2, 10, 16);
 
 const planetGeometry = new THREE.SphereGeometry(10, 32, 16);
 const planetMaterial = new THREE.MeshBasicMaterial({ color: 0x00FF41, wireframe: true });
 const planetSphere = new THREE.Mesh(planetGeometry, planetMaterial);
 scene.add(planetSphere);
 
-const lilPlanet = new THREE.Mesh(lilPlanetSphere, planetMaterial);
+const moon = new THREE.Mesh(moonSphere, planetMaterial);
 
 const ringGeometry = new THREE.TorusGeometry(18, 0.4, 16, 100);
 const ringTwoGeometry = new THREE.TorusGeometry(18, 0.4, 16, 100);
@@ -51,7 +51,7 @@ ringTwo.rotation.x = -Math.PI / 4;
 ring.position.set = (0, 0, 0);
 ringTwo.position.set = (0, 0, 0);
 
-lilPlanet.position.set(50, 0, -30); //rightleft, updown, forward/backward
+moon.position.set(50, 0, -30); //rightleft, updown, forward/backward
 
 const planetGroup = new THREE.Group();
 planetGroup.add(planetSphere);
@@ -59,7 +59,7 @@ planetGroup.add(ring);
 planetGroup.add(ringTwo);
 scene.add(planetGroup);
 
-scene.add(lilPlanet);
+scene.add(moon);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -86,8 +86,8 @@ function animate() {
   planetGroup.rotation.y += 0.005;
 
   const time = Date.now() * 0.001;
-  lilPlanet.position.x = Math.cos(time * 0.05) * 50;
-  lilPlanet.position.z = Math.sin(time * 0.05) * 50;
+  moon.position.x = Math.cos(time * 0.05) * 50;
+  moon.position.z = Math.sin(time * 0.05) * 50;
 
 
   controls.update();
