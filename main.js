@@ -26,7 +26,7 @@ scene.add(ambientLight);
 
 const moonSphere = new THREE.SphereGeometry(2, 10, 16);
 const planetGeometry = new THREE.SphereGeometry(10, 32, 16);
-const lilPlanetGeo = new THREE.SphereGeometry(12, 10, 16);
+const lilPlanetGeo = new THREE.SphereGeometry(20, 10, 16);
 
 const planetMaterial = new THREE.MeshBasicMaterial({ color: 0x00FF41, wireframe: true });
 const planetSphere = new THREE.Mesh(planetGeometry, planetMaterial);
@@ -34,6 +34,9 @@ scene.add(planetSphere);
 
 const lilPlanet = new THREE.Mesh(lilPlanetGeo, planetMaterial);
 scene.add(lilPlanet);
+
+const lilPlanetTwo = new THREE.Mesh(lilPlanetGeo, planetMaterial);
+scene.add(lilPlanetTwo);
 
 const moon = new THREE.Mesh(moonSphere, planetMaterial);
 
@@ -55,8 +58,9 @@ ringTwo.rotation.x = -Math.PI / 4;
 ring.position.set = (0, 0, 0);
 ringTwo.position.set = (0, 0, 0);
 
-moon.position.set(50, 0, -30); //rightleft, updown, forward/backward
-lilPlanet.position.set(50, 0, -200);
+moon.position.set(50, 0, -10); //rightleft, updown, forward/backward
+lilPlanet.position.set(150, 0, -800);
+lilPlanetTwo.position.set(-800, 0, -800);
 
 const planetGroup = new THREE.Group();
 planetGroup.add(planetSphere);
@@ -66,6 +70,7 @@ scene.add(planetGroup);
 
 scene.add(moon);
 scene.add(lilPlanet);
+scene.add(lilPlanetTwo);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -123,6 +128,7 @@ function animate() {
   moon.position.z = Math.sin(time * 0.05) * 50;
 
   lilPlanet.rotation.y += 0.005;
+  lilPlanetTwo.rotation.y += 0.005;
 
   controls.update();
 
