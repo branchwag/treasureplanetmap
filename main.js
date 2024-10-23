@@ -57,13 +57,20 @@ const thirdPlanet = new THREE.Mesh(thirdPlanetGeo, planetMaterial);
 const thirdRingGeo = new THREE.TorusGeometry(25, 0.6, 16, 100);
 const thirdRing = new THREE.Mesh(thirdRingGeo, ringMaterial);
 
-thirdPlanet.position.set(400, 0, -400);
-thirdRing.position.set(400, 0, -400);
-thirdRing.rotation.x = Math.PI / 3;
+const thirdPlanetCore = new THREE.Group();
+thirdPlanetCore.add(thirdPlanet);
+
+const thirdRingGroup = new THREE.Group();
+thirdRingGroup.add(thirdRing);
 
 const thirdPlanetGroup = new THREE.Group();
-thirdPlanetGroup.add(thirdPlanet);
-thirdPlanetGroup.add(thirdRing);
+thirdPlanetGroup.add(thirdPlanetCore);
+thirdPlanetGroup.add(thirdRingGroup);
+
+thirdPlanetGroup.position.set(400, 0, -400);
+
+thirdRing.rotation.x = Math.PI / 3;
+
 scene.add(thirdPlanetGroup);
 
 ring.rotation.x = Math.PI / 4;
@@ -143,6 +150,9 @@ function animate() {
 
   lilPlanet.rotation.y += 0.005;
   lilPlanetTwo.rotation.y += 0.005;
+
+  thirdPlanetCore.rotation.y += 0.008;
+  thirdRingGroup.rotation.z += 0.003;
   thirdPlanetGroup.rotation.y += 0.0001;
 
   controls.update();
