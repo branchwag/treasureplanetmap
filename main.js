@@ -42,7 +42,7 @@ scene.add(lilPlanet);
 const lilPlanetTwo = new THREE.Mesh(lilPlanetGeo, planetMaterial);
 const lilPlanetTwoCore = new THREE.Group();
 lilPlanetTwoCore.add(lilPlanetTwo);
-const fourthRingGeo = new THREE.TorusGeometry(24, 0.6, 16, 100);
+const fourthRingGeo = new THREE.TorusGeometry(32, 0.6, 16, 100);
 const fourthRing = new THREE.Mesh(fourthRingGeo, ringMaterial);
 const fourthRingGroup = new THREE.Group();
 fourthRingGroup.add(fourthRing);
@@ -50,7 +50,7 @@ const lilPlanetTwoSystem = new THREE.Group();
 lilPlanetTwoSystem.add(lilPlanetTwoCore);
 lilPlanetTwoSystem.add(fourthRingGroup);
 lilPlanetTwoSystem.position.set(-800, 0, -800);
-fourthRing.rotation.x = Math.PI / 3;
+fourthRing.rotation.x = Math.PI / 2;
 scene.add(lilPlanetTwoSystem);
 
 const moon = new THREE.Mesh(moonSphere, planetMaterial);
