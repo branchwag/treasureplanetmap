@@ -23,7 +23,11 @@ const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
 //shapes here
-
+const ringMaterial = new THREE.MeshBasicMaterial({
+  color: 0x00FF41,
+  side: THREE.DoubleSide,
+  wireframe: true
+});
 const moonSphere = new THREE.SphereGeometry(2, 10, 16);
 const planetGeometry = new THREE.SphereGeometry(10, 32, 16);
 const lilPlanetGeo = new THREE.SphereGeometry(20, 10, 16);
@@ -36,18 +40,23 @@ const lilPlanet = new THREE.Mesh(lilPlanetGeo, planetMaterial);
 scene.add(lilPlanet);
 
 const lilPlanetTwo = new THREE.Mesh(lilPlanetGeo, planetMaterial);
-scene.add(lilPlanetTwo);
+const lilPlanetTwoCore = new THREE.Group();
+lilPlanetTwoCore.add(lilPlanetTwo);
+const fourthRingGeo = new THREE.TorusGeometry(24, 0.6, 16, 100);
+const fourthRing = new THREE.Mesh(fourthRingGeo, ringMaterial);
+const fourthRingGroup = new THREE.Group();
+fourthRingGroup.add(fourthRing);
+const lilPlanetTwoSystem = new THREE.Group();
+lilPlanetTwoSystem.add(lilPlanetTwoCore);
+lilPlanetTwoSystem.add(fourthRingGroup);
+lilPlanetTwoSystem.position.set(-800, 0, -800);
+fourthRing.rotation.x = Math.PI / 3;
+scene.add(lilPlanetTwoSystem);
 
 const moon = new THREE.Mesh(moonSphere, planetMaterial);
 
 const ringGeometry = new THREE.TorusGeometry(18, 0.4, 16, 100);
 const ringTwoGeometry = new THREE.TorusGeometry(18, 0.4, 16, 100);
-
-const ringMaterial = new THREE.MeshBasicMaterial({
-  color: 0x00FF41,
-  side: THREE.DoubleSide,
-  wireframe: true
-});
 
 const ring = new THREE.Mesh(ringGeometry, ringMaterial);
 const ringTwo = new THREE.Mesh(ringTwoGeometry, ringMaterial);
@@ -56,21 +65,15 @@ const thirdPlanetGeo = new THREE.SphereGeometry(15, 10, 16);
 const thirdPlanet = new THREE.Mesh(thirdPlanetGeo, planetMaterial);
 const thirdRingGeo = new THREE.TorusGeometry(25, 0.6, 16, 100);
 const thirdRing = new THREE.Mesh(thirdRingGeo, ringMaterial);
-
 const thirdPlanetCore = new THREE.Group();
 thirdPlanetCore.add(thirdPlanet);
-
 const thirdRingGroup = new THREE.Group();
 thirdRingGroup.add(thirdRing);
-
 const thirdPlanetGroup = new THREE.Group();
 thirdPlanetGroup.add(thirdPlanetCore);
 thirdPlanetGroup.add(thirdRingGroup);
-
 thirdPlanetGroup.position.set(400, 0, -400);
-
 thirdRing.rotation.x = Math.PI / 3;
-
 scene.add(thirdPlanetGroup);
 
 ring.rotation.x = Math.PI / 4;
@@ -81,7 +84,6 @@ ringTwo.position.set = (0, 0, 0);
 
 moon.position.set(50, 0, -10); //rightleft, updown, forward/backward
 lilPlanet.position.set(150, 0, -800);
-lilPlanetTwo.position.set(-800, 0, -800);
 
 const planetGroup = new THREE.Group();
 planetGroup.add(planetSphere);
@@ -91,7 +93,7 @@ scene.add(planetGroup);
 
 scene.add(moon);
 scene.add(lilPlanet);
-scene.add(lilPlanetTwo);
+//scene.add(lilPlanetTwo);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -149,7 +151,10 @@ function animate() {
   moon.position.z = Math.sin(time * 0.05) * 50;
 
   lilPlanet.rotation.y += 0.005;
-  lilPlanetTwo.rotation.y += 0.005;
+
+  lilPlanetTwoCore.rotation.y += 0.005;
+  fourthRingGroup.rotation.z += 0.003;
+  lilPlanetTwoSystem.rotation.y += 0.0001;
 
   thirdPlanetCore.rotation.y += 0.008;
   thirdRingGroup.rotation.z += 0.003;
