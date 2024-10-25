@@ -149,17 +149,17 @@ cameraPositions.set(planetSphere, {
 });
 
 cameraPositions.set(thirdPlanet, {
-  position: new THREE.Vector3(400, 20, -370),
+  position: new THREE.Vector3(400, 20, -270),
   lookAt: thirdPlanetGroup.position
 });
 
 cameraPositions.set(lilPlanet, {
-  position: new THREE.Vector3(150, 20, -770),
+  position: new THREE.Vector3(150, 20, -700),
   lookAt: lilPlanet.position
 });
 
 cameraPositions.set(lilPlanetTwo, {
-  position: new THREE.Vector3(-800, 20, -770),
+  position: new THREE.Vector3(-800, 20, -700),
   lookAt: lilPlanetTwoSystem.position
 });
 
