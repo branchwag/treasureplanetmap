@@ -1,11 +1,9 @@
 import './style.css'
-
 import * as THREE from 'three';
-
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg'),
 });
@@ -93,7 +91,6 @@ scene.add(planetGroup);
 
 scene.add(moon);
 scene.add(lilPlanet);
-//scene.add(lilPlanetTwo);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -141,6 +138,88 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const cameraPositions = new Map();
+
+// Add planets to the clickable objects map with their desired camera positions
+cameraPositions.set(planetSphere, {
+  position: new THREE.Vector3(0, 20, 50), // Adjust these values as needed
+  lookAt: planetSphere.position
+});
+
+cameraPositions.set(thirdPlanet, {
+  position: new THREE.Vector3(400, 20, -370),
+  lookAt: thirdPlanetGroup.position
+});
+
+cameraPositions.set(lilPlanet, {
+  position: new THREE.Vector3(150, 20, -770),
+  lookAt: lilPlanet.position
+});
+
+cameraPositions.set(lilPlanetTwo, {
+  position: new THREE.Vector3(-800, 20, -770),
+  lookAt: lilPlanetTwoSystem.position
+});
+
+window.addEventListener('click', onMouseClick);
+
+function onMouseClick(event) {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(scene.children, true);
+
+  if (intersects.length > 0) {
+    //console.log('Hit:', intersects[0].object);
+    const clickedObject = intersects[0].object;
+    const targetPosition = findTargetPosition(clickedObject);
+
+    if (targetPosition) {
+      moveCamera(targetPosition.position, targetPosition.lookAt);
+    }
+  }
+
+  //console.log('Mouse position:', mouse.x, mouse.y);
+  //console.log('Intersects:', intersects);
+}
+
+function findTargetPosition(object) {
+  let current = object;
+  while (current) {
+    if (cameraPositions.has(current)) {
+      return cameraPositions.get(current);
+    }
+    current = current.parent;
+  }
+  return null;
+}
+
+// Variables for camera movement animation
+let isMoving = false;
+let startPosition = new THREE.Vector3();
+let startTarget = new THREE.Vector3();
+let endPosition = new THREE.Vector3();
+let endTarget = new THREE.Vector3();
+let movementProgress = 0;
+const MOVEMENT_DURATION = 2000; // Duration in milliseconds
+let movementStartTime;
+
+function moveCamera(targetPosition, targetLookAt) {
+  startPosition.copy(camera.position);
+  startTarget.copy(controls.target);
+
+  endPosition.copy(targetPosition);
+  endTarget.copy(targetLookAt);
+
+  movementProgress = 0;
+  movementStartTime = Date.now();
+  isMoving = true;
+  controls.enabled = false;
+}
+
 function animate() {
   requestAnimationFrame(animate);
 
@@ -160,9 +239,31 @@ function animate() {
   thirdRingGroup.rotation.y += 0.003;
   thirdPlanetGroup.rotation.y += 0.0001;
 
-  controls.update();
+  if (isMoving) {
+    const currentTime = Date.now();
+    const elapsed = currentTime - movementStartTime;
+    movementProgress = Math.min(elapsed / MOVEMENT_DURATION, 1);
 
+    const eased = easeInOutCubic(movementProgress);
+
+    camera.position.lerpVectors(startPosition, endPosition, eased);
+    controls.target.lerpVectors(startTarget, endTarget, eased);
+    camera.lookAt(controls.target);
+
+    if (movementProgress === 1) {
+      isMoving = false;
+      controls.enabled = true;
+    }
+  }
+
+  controls.update();
   renderer.render(scene, camera);
+}
+
+function easeInOutCubic(t) {
+  return t < 0.5
+    ? 4 * t * t * t
+    : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
 animate()
