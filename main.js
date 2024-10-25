@@ -73,7 +73,7 @@ const thirdPlanetGroup = new THREE.Group();
 thirdPlanetGroup.add(thirdPlanetCore);
 thirdPlanetGroup.add(thirdRingGroup);
 thirdPlanetGroup.position.set(400, 0, -400);
-thirdRing.rotation.x = Math.PI / 3;
+thirdRing.rotation.x = Math.PI / 2;
 scene.add(thirdPlanetGroup);
 
 ring.rotation.x = Math.PI / 4;
@@ -153,11 +153,11 @@ function animate() {
   lilPlanet.rotation.y += 0.005;
 
   lilPlanetTwoCore.rotation.y += 0.005;
-  fourthRingGroup.rotation.z += 0.003;
+  fourthRingGroup.rotation.y += 0.003;
   lilPlanetTwoSystem.rotation.y += 0.0001;
 
   thirdPlanetCore.rotation.y += 0.008;
-  thirdRingGroup.rotation.z += 0.003;
+  thirdRingGroup.rotation.y += 0.003;
   thirdPlanetGroup.rotation.y += 0.0001;
 
   controls.update();
