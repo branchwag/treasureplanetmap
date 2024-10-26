@@ -95,39 +95,41 @@ scene.add(lilPlanet);
 const controls = new OrbitControls(camera, renderer.domElement);
 
 function createStarField() {
-  const starLayers = [
-    { count: 500, spread: 200 },
-    { count: 1000, spread: 500 },
-    { count: 2000, spread: 1000 }
-  ];
-
-  starLayers.forEach(layer => {
-    const geometry = new THREE.SphereGeometry(0.25, 24, 24);
-    const material = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      emissive: 0xffffff,
-      emissiveIntensity: 0.2
-    });
-
-    for (let i = 0; i < layer.count; i++) {
-      const star = new THREE.Mesh(geometry, material);
-      const theta = THREE.MathUtils.randFloatSpread(360);
-      const phi = THREE.MathUtils.randFloatSpread(360);
-
-      const radius = layer.spread;
-      star.position.x = radius * Math.sin(theta) * Math.cos(phi);
-      star.position.y = radius * Math.sin(theta) * Math.sin(phi);
-      star.position.z = radius * Math.cos(theta);
-
-      const scale = Math.random() * 0.5 + 0.5;
-      star.scale.set(scale, scale, scale);
-
-      scene.add(star);
-    }
+  const starGeometry = new THREE.SphereGeometry(0.15, 8, 8);
+  const starMaterial = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    emissive: 0xffffff,
+    emissiveIntensity: 0.8
   });
+
+  const numStars = 5000;
+  const stars = [];
+
+  for (let i = 0; i < numStars; i++) {
+    const star = new THREE.Mesh(starGeometry, starMaterial.clone());
+
+    const radius = THREE.MathUtils.randFloat(1500, 2000);
+    const theta = THREE.MathUtils.randFloat(0, Math.PI * 2);
+    const phi = THREE.MathUtils.randFloat(0, Math.PI);
+
+    star.position.x = radius * Math.sin(phi) * Math.cos(theta);
+    star.position.y = radius * Math.sin(phi) * Math.sin(theta);
+    star.position.z = radius * Math.cos(phi);
+
+    star.userData.originalIntensity = Math.random() * 0.5 + 0.5;
+    star.userData.twinkleSpeed = Math.random() * 0.02 + 0.01;
+    star.userData.twinklePhase = Math.random() * Math.PI * 2;
+
+    const scale = Math.random() * 0.5 + 0.5;
+    star.scale.set(scale, scale, scale);
+
+    scene.add(star);
+    stars.push(star);
+  }
+  return stars;
 }
 
-createStarField();
+const stars = createStarField();
 
 controls.maxDistance = 1000;
 controls.minDistance = 10;
@@ -226,6 +228,12 @@ function animate() {
   planetGroup.rotation.y += 0.005;
 
   const time = Date.now() * 0.001;
+  stars.forEach(star => {
+    const twinkle = Math.sin(time * star.userData.twinkleSpeed + star.userData.twinklePhase);
+    const intensity = star.userData.originalIntensity * (1 + twinkle * 0.2);
+    star.material.emissiveIntensity = intensity;
+  });
+
   moon.position.x = Math.cos(time * 0.05) * 50;
   moon.position.z = Math.sin(time * 0.05) * 50;
 
