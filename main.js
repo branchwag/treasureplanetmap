@@ -4,6 +4,10 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+
+const backgroundScene = new THREE.Scene();
+const backgroundCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg'),
 });
@@ -11,6 +15,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 camera.position.setZ(30);
+backgroundCamera.position.setZ(30);
 
 //lights
 const pointLight = new THREE.PointLight(0xffffff, 1);
@@ -96,10 +101,9 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 function createStarField() {
   const starGeometry = new THREE.SphereGeometry(0.15, 8, 8);
-  const starMaterial = new THREE.MeshStandardMaterial({
+  const starMaterial = new THREE.MeshBasicMaterial({
     color: 0xffffff,
-    emissive: 0xffffff,
-    emissiveIntensity: 0.8
+    transparent: true
   });
 
   const numStars = 15000;
@@ -108,7 +112,7 @@ function createStarField() {
   for (let i = 0; i < numStars; i++) {
     const star = new THREE.Mesh(starGeometry, starMaterial.clone());
 
-    const radius = THREE.MathUtils.randFloat(1500, 2000);
+    const radius = 5000;
     const theta = THREE.MathUtils.randFloat(0, Math.PI * 2);
     const phi = THREE.MathUtils.randFloat(0, Math.PI);
 
@@ -116,14 +120,14 @@ function createStarField() {
     star.position.y = radius * Math.sin(phi) * Math.sin(theta);
     star.position.z = radius * Math.cos(phi);
 
-    star.userData.originalIntensity = Math.random() * 0.5 + 0.5;
+    star.userData.originalOpacity = Math.random() * 0.5 + 0.5;
     star.userData.twinkleSpeed = Math.random() * 0.02 + 0.01;
     star.userData.twinklePhase = Math.random() * Math.PI * 2;
 
     const scale = Math.random() * 0.5 + 0.5;
     star.scale.set(scale, scale, scale);
 
-    scene.add(star);
+    backgroundScene.add(star);
     stars.push(star);
   }
   return stars;
@@ -137,6 +141,8 @@ controls.minDistance = 10;
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+  backgroundCamera.aspect = window.innerWidth / window.innerHeight;
+  backgroundCamera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
@@ -230,8 +236,7 @@ function animate() {
   const time = Date.now() * 0.001;
   stars.forEach(star => {
     const twinkle = Math.sin(time * star.userData.twinkleSpeed + star.userData.twinklePhase);
-    const intensity = star.userData.originalIntensity * (1 + twinkle * 0.2);
-    star.material.emissiveIntensity = intensity;
+    star.material.opacity = star.userData.originalOpacity * (1 + twinkle * 0.2);
   });
 
   moon.position.x = Math.cos(time * 0.05) * 50;
@@ -246,6 +251,10 @@ function animate() {
   thirdPlanetCore.rotation.y += 0.008;
   thirdRingGroup.rotation.y += 0.003;
   thirdPlanetGroup.rotation.y += 0.0001;
+
+  backgroundCamera.quaternion.copy(camera.quaternion);
+
+
 
   if (isMoving) {
     const currentTime = Date.now();
@@ -264,8 +273,13 @@ function animate() {
     }
   }
 
-  controls.update();
+  renderer.autoClear = true;
+  renderer.render(backgroundScene, backgroundCamera);
+
+  renderer.autoClear = false;
   renderer.render(scene, camera);
+
+  controls.update();
 }
 
 function easeInOutCubic(t) {
