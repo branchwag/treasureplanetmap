@@ -100,7 +100,7 @@ scene.add(lilPlanet);
 const controls = new OrbitControls(camera, renderer.domElement);
 
 function createStarField() {
-  const starGeometry = new THREE.SphereGeometry(0.15, 8, 8);
+  const starGeometry = new THREE.SphereGeometry(0.55, 8, 8);
   const starMaterial = new THREE.MeshBasicMaterial({
     color: 0xffffff,
     transparent: true
