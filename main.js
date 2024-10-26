@@ -102,7 +102,7 @@ function createStarField() {
     emissiveIntensity: 0.8
   });
 
-  const numStars = 5000;
+  const numStars = 15000;
   const stars = [];
 
   for (let i = 0; i < numStars; i++) {
