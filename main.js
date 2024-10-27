@@ -57,6 +57,8 @@ fourthRing.rotation.x = Math.PI / 2;
 scene.add(lilPlanetTwoSystem);
 
 const moon = new THREE.Mesh(moonSphere, planetMaterial);
+const moonOrbit = new THREE.Group();
+moonOrbit.add(moon);
 
 const ringGeometry = new THREE.TorusGeometry(18, 0.4, 16, 100);
 const ringTwoGeometry = new THREE.TorusGeometry(18, 0.4, 16, 100);
@@ -85,7 +87,8 @@ ringTwo.rotation.x = -Math.PI / 4;
 ring.position.set = (0, 0, 0);
 ringTwo.position.set = (0, 0, 0);
 
-moon.position.set(50, 0, -10); //rightleft, updown, forward/backward
+moon.position.set(30, 0, 0); //rightleft, updown, forward/backward
+
 lilPlanet.position.set(150, 0, -800);
 
 const planetGroup = new THREE.Group();
@@ -94,8 +97,9 @@ planetGroup.add(ring);
 planetGroup.add(ringTwo);
 scene.add(planetGroup);
 
-scene.add(moon);
 scene.add(lilPlanet);
+
+lilPlanet.add(moonOrbit);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -239,8 +243,8 @@ function animate() {
     star.material.opacity = star.userData.originalOpacity * (1 + twinkle * 0.2);
   });
 
-  moon.position.x = Math.cos(time * 0.05) * 50;
-  moon.position.z = Math.sin(time * 0.05) * 50;
+
+  moonOrbit.rotation.y += 0.02;
 
   lilPlanet.rotation.y += 0.005;
 
@@ -253,8 +257,6 @@ function animate() {
   thirdPlanetGroup.rotation.y += 0.0001;
 
   backgroundCamera.quaternion.copy(camera.quaternion);
-
-
 
   if (isMoving) {
     const currentTime = Date.now();
