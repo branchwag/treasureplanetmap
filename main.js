@@ -103,6 +103,56 @@ lilPlanet.add(moonOrbit);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
+function createGalaxy() {
+  const positions = new Float32Array(30000 * 3);
+  const colors = new Float32Array(30000 * 3);
+
+  const galaxyGeometry = new THREE.BufferGeometry();
+  const galaxyMaterial = new THREE.PointsMaterial({
+    size: 3,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.8
+  });
+
+  const arms = 3;
+  const radius = 500;
+  const turns = 3;
+  const armWidth = 20;
+  const innerRadius = 50;
+
+  for (let i = 0; i < positions.length; i += 3) {
+    const progress = i / positions.length;
+    const r = innerRadius + (radius - innerRadius) * Math.pow(progress, 0.5);
+
+    const armIndex = Math.floor(Math.random() * arms);
+    const curveAngle = (r / radius) * turns * Math.PI * 2;
+    const randomAngle = (Math.random() - 0.5) * (1 / r) * armWidth;
+    const angle = (armIndex / arms) * Math.PI * 2 + curveAngle + randomAngle;
+
+    positions[i] = Math.cos(angle) * r;
+    positions[i + 1] = (Math.random() - 0.5) * armWidth * 0.3;
+    positions[i + 2] = Math.sin(angle) * r;
+
+    const colorProgress = Math.random();
+    colors[i] = 0.6 + colorProgress * 0.4;
+    colors[i + 1] = 0.6 + colorProgress * 0.4;
+    colors[i + 2] = 0.8 + colorProgress * 0.2;
+  }
+
+  galaxyGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  galaxyGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+  const galaxy = new THREE.Points(galaxyGeometry, galaxyMaterial);
+  galaxy.position.set(-4500, -1500, -4500);
+  galaxy.rotation.x = Math.PI * 0.2;
+  scene.add(galaxy);
+
+  return galaxy;
+}
+
+const galaxy = createGalaxy();
+
 function createStarField() {
   const starGeometry = new THREE.SphereGeometry(0.55, 8, 8);
   const starMaterial = new THREE.MeshBasicMaterial({
@@ -243,6 +293,7 @@ function animate() {
     star.material.opacity = star.userData.originalOpacity * (1 + twinkle * 0.2);
   });
 
+  galaxy.rotation.y += 0.0001;
 
   moonOrbit.rotation.y += 0.02;
 
