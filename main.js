@@ -134,10 +134,9 @@ function createGalaxy() {
     positions[i + 1] = (Math.random() - 0.5) * armWidth * 0.3;
     positions[i + 2] = Math.sin(angle) * r;
 
-    const colorProgress = Math.random();
-    colors[i] = 0.6 + colorProgress * 0.4;
-    colors[i + 1] = 0.6 + colorProgress * 0.4;
-    colors[i + 2] = 0.8 + colorProgress * 0.2;
+    colors[i] = 0;
+    colors[i + 1] = 1;
+    colors[i + 2] = 0.25;
   }
 
   galaxyGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
