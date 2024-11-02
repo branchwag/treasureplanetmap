@@ -101,6 +101,57 @@ scene.add(lilPlanet);
 
 lilPlanet.add(moonOrbit);
 
+const distantPlanetGeo = new THREE.SphereGeometry(25, 12, 16);
+const distantPlanet = new THREE.Mesh(distantPlanetGeo, planetMaterial);
+const distantRingGeo = new THREE.TorusGeometry(40, 0.8, 16, 100);
+const distantRing = new THREE.Mesh(distantRingGeo, ringMaterial);
+const distantPlanetCore = new THREE.Group();
+distantPlanetCore.add(distantPlanet);
+const distantRingGroup = new THREE.Group();
+distantRingGroup.add(distantRing);
+const distantPlanetSystem = new THREE.Group();
+distantPlanetSystem.add(distantPlanetCore);
+distantPlanetSystem.add(distantRingGroup);
+distantPlanetSystem.position.set(-1200, 200, -1200);
+distantRing.rotation.x = Math.PI / 3;
+scene.add(distantPlanetSystem);
+
+const binaryPlanetGeo1 = new THREE.SphereGeometry(15, 10, 16);
+const binaryPlanetGeo2 = new THREE.SphereGeometry(12, 10, 16);
+const binaryPlanet1 = new THREE.Mesh(binaryPlanetGeo1, planetMaterial);
+const binaryPlanet2 = new THREE.Mesh(binaryPlanetGeo2, planetMaterial);
+const binaryCore = new THREE.Group();
+binaryPlanet1.position.set(30, 0, 0);
+binaryPlanet2.position.set(-30, 0, 0);
+binaryCore.add(binaryPlanet1);
+binaryCore.add(binaryPlanet2);
+const binarySystem = new THREE.Group();
+binarySystem.add(binaryCore);
+binarySystem.position.set(1000, -100, -1500);
+scene.add(binarySystem);
+
+const gasGiantGeo = new THREE.SphereGeometry(35, 16, 16);
+const gasGiant = new THREE.Mesh(gasGiantGeo, planetMaterial);
+const gasGiantCore = new THREE.Group();
+gasGiantCore.add(gasGiant);
+
+const ringSpacing = 2;
+const rings = [];
+for (let i = 0; i < 3; i++) {
+  const ringGeo = new THREE.TorusGeometry(50 + (i * ringSpacing), 0.3, 16, 100);
+  const ring = new THREE.Mesh(ringGeo, ringMaterial);
+  ring.rotation.x = Math.PI / 2;
+  rings.push(ring);
+  const ringGroup = new THREE.Group();
+  ringGroup.add(ring);
+  gasGiantCore.add(ringGroup);
+}
+
+const gasGiantSystem = new THREE.Group();
+gasGiantSystem.add(gasGiantCore);
+gasGiantSystem.position.set(-800, -300, -1800);
+scene.add(gasGiantSystem);
+
 const controls = new OrbitControls(camera, renderer.domElement);
 
 function createGalaxy() {
@@ -224,6 +275,21 @@ cameraPositions.set(lilPlanetTwo, {
   lookAt: lilPlanetTwoSystem.position
 });
 
+cameraPositions.set(distantPlanet, {
+  position: new THREE.Vector3(-1200, 220, -1100),
+  lookAt: distantPlanetSystem.position
+});
+
+cameraPositions.set(binaryPlanet1, {
+  position: new THREE.Vector3(1000, 0, -1400),
+  lookAt: binarySystem.position
+});
+
+cameraPositions.set(gasGiant, {
+  position: new THREE.Vector3(-800, -280, -1700),
+  lookAt: gasGiantSystem.position
+});
+
 window.addEventListener('click', onMouseClick);
 
 function onMouseClick(event) {
@@ -305,6 +371,19 @@ function animate() {
   thirdPlanetCore.rotation.y += 0.008;
   thirdRingGroup.rotation.y += 0.003;
   thirdPlanetGroup.rotation.y += 0.0001;
+
+  distantPlanetCore.rotation.y += 0.003;
+  distantRingGroup.rotation.y += 0.001;
+  distantPlanetSystem.rotation.y += 0.0002;
+
+  binaryCore.rotation.y += 0.001;
+  binarySystem.rotation.y += 0.0003;
+
+  gasGiantCore.rotation.y += 0.002;
+  rings.forEach((ring, index) => {
+    ring.parent.rotation.y += 0.001 * (index + 1);
+  });
+  gasGiantSystem.rotation.y += 0.0001;
 
   backgroundCamera.quaternion.copy(camera.quaternion);
 
