@@ -4,3 +4,4 @@ TODO:
 - make sure stars are in the distance and not between planets
 - fix the zooming so it's not so close 
 - refactor code so it's more professional
+- make asteroid belt
