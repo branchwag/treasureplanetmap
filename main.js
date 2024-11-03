@@ -167,7 +167,7 @@ scene.add(gasGiantSystem);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
-function createGalaxy() {
+function createGalaxy(x, y, z) {
   const positions = new Float32Array(30000 * 3);
   const colors = new Float32Array(30000 * 3);
 
@@ -207,14 +207,15 @@ function createGalaxy() {
   galaxyGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
   const galaxy = new THREE.Points(galaxyGeometry, galaxyMaterial);
-  galaxy.position.set(-4500, -1500, -4500);
+  galaxy.position.set(x, y, z);
   galaxy.rotation.x = Math.PI * 0.2;
   scene.add(galaxy);
 
   return galaxy;
 }
 
-const galaxy = createGalaxy();
+const galaxy = createGalaxy(-4500, -1500, -4500);
+const galaxyTwo = createGalaxy(4500, 1500, 4500);
 
 function createStarField() {
   const starGeometry = new THREE.SphereGeometry(0.55, 8, 8);
@@ -383,6 +384,7 @@ function animate() {
 
   planetGroup.rotation.y += 0.005;
   galaxy.rotation.y += 0.0001;
+  galaxyTwo.rotation.y += 0.0001;
   moonOrbit.rotation.y += 0.02;
   lilPlanet.rotation.y += 0.005;
   lilPlanetTwoCore.rotation.y += 0.005;
