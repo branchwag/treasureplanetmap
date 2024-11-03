@@ -14,15 +14,14 @@ const renderer = new THREE.WebGLRenderer({
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-//camera.position.setZ(30);
-camera.position.set(200, 20, 50);
-
-//backgroundCamera.position.setZ(30);
+camera.position.setZ(30);
+backgroundCamera.position.setZ(30);
 
 let selectedObject = null;
 let cameraOffset = new THREE.Vector3();
 let isFollowing = false;
 
+//light
 const pointLight = new THREE.PointLight(0xffffff, 1);
 pointLight.position.set(20, 20, 20);
 scene.add(pointLight);
@@ -30,15 +29,15 @@ scene.add(pointLight);
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
+//objects
 const sunGeometry = new THREE.SphereGeometry(50, 32, 32);
 const sunMaterial = new THREE.MeshBasicMaterial({
   color: 0x00FF41,
   wireframe: true
 });
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+sun.position.set(2000, 800, -500);
 scene.add(sun);
-const sunLight = new THREE.PointLight(0xffffff, 2);
-sun.add(sunLight);
 
 const ringMaterial = new THREE.MeshBasicMaterial({
   color: 0x00FF41,
@@ -166,38 +165,6 @@ gasGiantSystem.add(gasGiantCore);
 gasGiantSystem.position.set(-800, -300, -1800);
 scene.add(gasGiantSystem);
 
-const planetOrbit = new THREE.Group();
-const lilPlanetOrbit = new THREE.Group();
-const thirdPlanetOrbit = new THREE.Group();
-const lilPlanetTwoOrbit = new THREE.Group();
-const distantPlanetOrbit = new THREE.Group();
-const binarySystemOrbit = new THREE.Group();
-const gasGiantOrbit = new THREE.Group();
-
-scene.add(planetOrbit);
-scene.add(lilPlanetOrbit);
-scene.add(thirdPlanetOrbit);
-scene.add(lilPlanetTwoOrbit);
-scene.add(distantPlanetOrbit);
-scene.add(binarySystemOrbit);
-scene.add(gasGiantOrbit);
-
-planetOrbit.add(planetGroup);
-lilPlanetOrbit.add(lilPlanet);
-thirdPlanetOrbit.add(thirdPlanetGroup);
-lilPlanetTwoOrbit.add(lilPlanetTwoSystem);
-distantPlanetOrbit.add(distantPlanetSystem);
-binarySystemOrbit.add(binarySystem);
-gasGiantOrbit.add(gasGiantSystem);
-
-planetGroup.position.set(200, 0, 0);
-lilPlanet.position.set(400, 0, 0);
-thirdPlanetGroup.position.set(600, 0, 0);
-lilPlanetTwoSystem.position.set(800, 0, 0);
-distantPlanetSystem.position.set(1000, 0, 0);
-binarySystem.position.set(1200, 0, 0);
-gasGiantSystem.position.set(1400, 0, 0);
-
 const controls = new OrbitControls(camera, renderer.domElement);
 
 function createGalaxy() {
@@ -300,50 +267,46 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const cameraPositions = new Map();
 
-controls.target.copy(planetGroup.position);
-camera.lookAt(planetGroup.position);
-
-backgroundCamera.position.copy(camera.position);
-
 cameraPositions.set(planetSphere, {
-  offset: new THREE.Vector3(0, 20, 50),
-  lookAt: new THREE.Vector3(0, 0, 0)
+  position: new THREE.Vector3(0, 20, 50),
+  lookAt: planetSphere.position
 });
 
 cameraPositions.set(thirdPlanet, {
-  offset: new THREE.Vector3(0, 20, 50),
-  lookAt: new THREE.Vector3(0, 0, 0)
+  position: new THREE.Vector3(400, 20, -270),
+  lookAt: thirdPlanetGroup.position
 });
 
 cameraPositions.set(lilPlanet, {
-  offset: new THREE.Vector3(0, 20, 50),
-  lookAt: new THREE.Vector3(0, 0, 0)
+  position: new THREE.Vector3(150, 20, -700),
+  lookAt: lilPlanet.position
 });
 
 cameraPositions.set(lilPlanetTwo, {
-  offset: new THREE.Vector3(0, 20, 50),
-  lookAt: new THREE.Vector3(0, 0, 0)
+  position: new THREE.Vector3(-800, 20, -700),
+  lookAt: lilPlanetTwoSystem.position
 });
 
 cameraPositions.set(distantPlanet, {
-  offset: new THREE.Vector3(0, 20, 50),
-  lookAt: new THREE.Vector3(0, 0, 0)
+  position: new THREE.Vector3(-1200, 220, -1100),
+  lookAt: distantPlanetSystem.position
 });
 
 cameraPositions.set(binaryPlanet1, {
-  offset: new THREE.Vector3(0, 20, 50),
-  lookAt: new THREE.Vector3(0, 0, 0)
+  position: new THREE.Vector3(1000, 0, -1400),
+  lookAt: binarySystem.position
 });
 
 cameraPositions.set(gasGiant, {
-  offset: new THREE.Vector3(0, 20, 50),
-  lookAt: new THREE.Vector3(0, 0, 0)
+  position: new THREE.Vector3(-800, -280, -1700),
+  lookAt: gasGiantSystem.position
 });
 
 cameraPositions.set(sun, {
-  offset: new THREE.Vector3(0, 100, 200),
-  lookAt: new THREE.Vector3(0, 0, 0)
+  position: new THREE.Vector3(2200, 800, -500),
+  lookAt: sun.position
 });
+
 window.addEventListener('click', onMouseClick);
 
 function onMouseClick(event) {
@@ -359,32 +322,11 @@ function onMouseClick(event) {
     const targetPosition = findTargetPosition(clickedObject);
 
     if (targetPosition) {
-      const worldPosition = new THREE.Vector3();
-      clickedObject.getWorldPosition(worldPosition);
-
-      const targetCameraPos = worldPosition.clone().add(targetPosition.offset);
-
-      moveCamera(targetCameraPos, worldPosition, clickedObject);
+      moveCamera(targetPosition.position, targetPosition.lookAt);
     }
-  } else {
-    selectedObject = null;
-    isFollowing = false;
-    controls.enabled = true;
   }
-
   //console.log('Mouse position:', mouse.x, mouse.y);
   //console.log('Intersects:', intersects);
-}
-
-function intializeCamera() {
-  const worldPosition = new THREE.Vector3();
-  planetGroup.getWorldPosition(worldPosition);
-
-  const targetPosition = cameraPositions.get(planetSphere);
-
-  const targetCameraPos = worldPosition.clone().add(targetPosition.offset);
-
-  moveCamera(targetCameraPos, worldPosition, planetSphere);
 }
 
 function findTargetPosition(object) {
@@ -432,15 +374,8 @@ function moveCamera(targetPosition, targetLookAt, object) {
 function animate() {
   requestAnimationFrame(animate);
 
-  planetOrbit.rotation.y += 0.002;
-  lilPlanetOrbit.rotation.y += 0.0015;
-  thirdPlanetOrbit.rotation.y += 0.0012;
-  lilPlanetTwoOrbit.rotation.y += 0.001;
-  distantPlanetOrbit.rotation.y += 0.0008;
-  binarySystemOrbit.rotation.y += 0.0006;
-  gasGiantOrbit.rotation.y += 0.0004;
-
   const time = Date.now() * 0.001;
+
   stars.forEach(star => {
     const twinkle = Math.sin(time * star.userData.twinkleSpeed + star.userData.twinklePhase);
     star.material.opacity = star.userData.originalOpacity * (1 + twinkle * 0.2);
@@ -448,32 +383,24 @@ function animate() {
 
   planetGroup.rotation.y += 0.005;
   galaxy.rotation.y += 0.0001;
-
   moonOrbit.rotation.y += 0.02;
-
   lilPlanet.rotation.y += 0.005;
-
   lilPlanetTwoCore.rotation.y += 0.005;
   fourthRingGroup.rotation.y += 0.003;
   lilPlanetTwoSystem.rotation.y += 0.0001;
-
   thirdPlanetCore.rotation.y += 0.008;
   thirdRingGroup.rotation.y += 0.003;
   thirdPlanetGroup.rotation.y += 0.0001;
-
   distantPlanetCore.rotation.y += 0.003;
   distantRingGroup.rotation.y += 0.001;
   distantPlanetSystem.rotation.y += 0.0002;
-
   binaryCore.rotation.y += 0.001;
   binarySystem.rotation.y += 0.0003;
-
   gasGiantCore.rotation.y += 0.002;
   rings.forEach((ring, index) => {
     ring.parent.rotation.y += 0.001 * (index + 1);
   });
   gasGiantSystem.rotation.y += 0.0001;
-
   sun.rotation.y += 0.001;
 
   backgroundCamera.quaternion.copy(camera.quaternion);
@@ -491,21 +418,8 @@ function animate() {
 
     if (movementProgress === 1) {
       isMoving = false;
-      if (isFollowing) {
-        controls.enabled = false;
-      } else {
-        controls.enabled = true;
-      }
+      controls.enabled = true;
     }
-  } else if (isFollowing && selectedObject) {
-    const worldPosition = new THREE.Vector3();
-    selectedObject.getWorldPosition(worldPosition);
-
-    const targetPosition = worldPosition.clone().add(cameraOffset);
-
-    camera.position.lerp(targetPosition, 0.1);
-    controls.target.lerp(worldPosition, 0.1);
-    camera.lookAt(controls.target);
   }
 
   renderer.autoClear = true;
@@ -523,13 +437,4 @@ function easeInOutCubic(t) {
     : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
-window.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') {
-    selectedObject = null;
-    isFollowing = false;
-    controls.enabled = true;
-  }
-});
-
 animate()
-intializeCamera();
