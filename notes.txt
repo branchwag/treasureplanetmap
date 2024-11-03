@@ -1,7 +1,5 @@
 TODO:
 
-- make stars more natural and not layered spheres
-- make sure stars are in the distance and not between planets
-- fix the zooming so it's not so close 
-- refactor code so it's more professional
+- fix the zooming 
+- refactor code structure
 - make asteroid belt
