@@ -6,4 +6,4 @@ A recreation of the map in Treasure Planet :)
 npm run dev
 ```
 
-[Demo video](./demo.webm)
+<img src="./treasureplanetdemo.gif" alt= "Home Page">
